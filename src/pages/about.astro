@@ -1,0 +1,20 @@
+---
+import { Image } from 'astro:assets';
+import Layout from '../layouts/BlogPost.astro';
+import heroImage from "../assets/blog-placeholder-about.jpg";
+---
+
+<Layout
+	title="About Me"
+	description="I've been in the IT game for almost 20 years, doing all sorts of different jobs. I know a thing or two about bits and how to make sense of them. And you won't believe it, but it seems like systems magically start working better whenever I'm around!"
+	pubDate={new Date('October 10 2023')}
+	heroImage={heroImage}
+>
+	<p>
+    Hello and nice to meet you. My name is Aleksey Zhukov.
+	</p>
+
+	<p>
+    And I've been in the IT game for almost 20 years, doing all sorts of different jobs. I know a thing or two about bits and how to make sense of them. And you won't believe it, but it seems like systems magically start working better whenever I'm around!
+	</p>
+</Layout>
