@@ -121,7 +121,7 @@ root@container-is-a-process:~# nsenter --all --target 2661
 nsenter: failed to execute /bin/bash: No such file or directory
 ```
 
-Specifying binary that could be found in the image resolves this issue. Following command is equivalent of calling `docker -it exec slepper /bin/sh`. Let's look around.
+Specifying binary that could be found in the image resolves this issue. Following command is equivalent of calling `docker -it exec sleeper /bin/sh`. Let's look around.
 
 ```bash
 root@container-is-a-process:~# nsenter --all --target 2661 /bin/sh
