@@ -147,6 +147,7 @@ code {
 	border-radius: 2px;
 }
 pre {
+	font-family: 'Space Mono', monospace;
 	padding: 1.5em;
 	border-radius: 8px;
 }
