@@ -1,7 +1,7 @@
 <svelte:head>
   <script async lang="javascript">
     var remark_config = {
-      host: "https://remark42.alezkv.net",
+      host: "https://comments.alezkv.pro",
       site_id: "alezkv.pro",
       components: ["embed"],
       show_rss_subsription: false,
