@@ -1,10 +1,11 @@
 <svelte:head>
   <script async lang="javascript">
     var remark_config = {
-      host: "https://comments.alezkv.pro",
+      host: "https://remark42.alezkv.net",
       site_id: "alezkv.pro",
       components: ["embed"],
       show_rss_subsription: false,
+      no_footer: true,
     };
     !(function (e, n) {
       for (var o = 0; o < e.length; o++) {

@@ -77,7 +77,8 @@ body {
 	font-size: 20px;
 	line-height: 1.7;
 }
-main {
+main,
+#remark42 {
 	width: 720px;
 	max-width: calc(100% - 2em);
 	margin: auto;
