@@ -79,3 +79,6 @@ spec:
     server: "https://kubernetes.default.svc"
     namespace: authentik
 ```
+
+
+NOTE: such vast combinatoric options - is a bless and a curs of k8s/ArgoCD. You need to have a clear vision or you can stuck with all that complexity and spend time and effort on many avaliable options with small return.
