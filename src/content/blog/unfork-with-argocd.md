@@ -1,11 +1,13 @@
 ---
 title: 'Unfork with ArgoCD'
 description: 'How to add or change k8s resources using ArgoCD avoiding forking of third-party software.'
-pubDate: 'Jan 8 2024'
+pubDate: 'Jan 13 2024'
 heroImage: '../../assets/blog/unfork-with-argocd/unfork-with-argocd.png'
 ---
 
 With the help of existing freely available software, we can build a personal or company software stack without starting from scratch, but rather by standing on the shoulders of giants. This eliminates the need to constantly reinvent most parts of our systems. However, sometimes existing off-the-shelf solutions don't provide enough customization to achieve the required goals. In such cases, we face a dilemma: to fork or not to fork. There are reasons for either choice, but today we will explore the "unfork" approach. We will investigate available options with examples and compare them afterward.
+
+All examples are avaliable in [companion repo](https://github.com/alezkv/unfork-with-argocd/).
 
 ### Assumptions regarding the environment and the goal
 
@@ -26,7 +28,6 @@ Here is a list of ways to distribute software that occur in the wild, along with
 - helm chart [Traefik Ingress](https://github.com/traefik/traefik-helm-chart)
 
 [ArgoCD has its own set of supported sources for applications](https://argo-cd.readthedocs.io/en/stable/user-guide/application_sources/) as such:
-
 - Kustomize applications
 - Helm charts
 - A directory of manifests
