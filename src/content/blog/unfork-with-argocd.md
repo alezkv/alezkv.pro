@@ -54,11 +54,13 @@ Cons:
 - [Rollback is not supported for apps with multiple sources](https://github.com/argoproj/argo-cd/blob/cd4fc97c9dee7b69721bbb577a4f50ba897399c5/ui/src/app/applications/components/application-details/application-details.tsx#L802)
 
 Here is example of using Helm Chart from upstream with our custom values.yaml from Git. Plus resources from plain manifests owerwrite on top.
+
+`$ cat apps/_installed/multiple-sources.yaml`
 ```
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: authentik
+  name: multiple-sources
   namespace: argocd
 spec:
   project: default
@@ -68,23 +70,23 @@ spec:
       targetRevision: 2023.10.5
       helm:
         valueFiles:
-          - $values/apps/authentik/values.yaml
-    - repoURL: https://github.com/alezkv/unfork-argocd
+          - $values/apps/multiple-sources/values.yaml
+    - repoURL: https://github.com/alezkv/unfork-with-argocd
       targetRevision: HEAD
       ref: values
-    - repoURL: https://github.com/alezkv/unfork-argocd
-      path: apps/authentik/resources/
+    - repoURL: https://github.com/alezkv/unfork-with-argocd
+      path: apps/multiple-sources/resources/
       targetRevision: HEAD
   destination:
     server: "https://kubernetes.default.svc"
-    namespace: authentik
+    namespace: multiple-sources
 ```
 
 You can combine any suported by ArgoCD sources. So for example you could get external software from kustomize, then apply local Helm Chart and finally trow on top couple plain manifests.
 
 ### Umbrella chart
 
-This tecknik utilyze dependency feature of Helm Cart. You can use multiple charts as a dependacyes as well as bake it's configuration within umrella chart.
+This tecknik utilize dependency feature of Helm Cart. You can use multiple charts as a dependacyes as well as bake it's configuration within umrella chart.
 
 You need to have `Application` and umbrella Chart.
 
@@ -92,39 +94,33 @@ You need to have `Application` and umbrella Chart.
 ```
 apps
 ├── _installed
-│   └── podinfo-umbrella.yaml
-└── podinfo-umbrella
+│   └── chart-umbrella.yaml
+└── chart-umbrella
     ├── Chart.yaml
     ├── templates
     │   └── configmap.yaml
     └── values.yaml
 ```
 
-`$ cat apps/_installed/podinfo-umbrella.yaml`
+`$ cat apps/_installed/chart-umbrella.yaml`
 ```
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: podinfo-umbrella
+  name: chart-umbrella
   namespace: argocd
 spec:
   project: default
   sources:
-    - repoURL: https://github.com/alezkv/c.alezkv.net
-      path: apps/podinfo-umbrella/
+    - repoURL: https://github.com/alezkv/unfork-with-argocd
+      path: apps/chart-umbrella/
       targetRevision: HEAD
   destination:
     server: "https://kubernetes.default.svc"
-    namespace: podinfo-umbrella
-  syncPolicy:
-    syncOptions:
-      - CreateNamespace=true
-    automated:
-      prune: true
-      selfHeal: true
+    namespace: chart-umbrella
 ```
 
-`$ cat apps/podinfo-umbrella/Chart.yaml`
+`$ cat apps/chart-umbrella/Chart.yaml`
 ```
 apiVersion: v1
 version: 1.0.0
@@ -136,17 +132,17 @@ dependencies:
     repository: https://stefanprodan.github.io/podinfo
 ```
 
-`$ cat apps/podinfo-umbrella/values.yaml`
+`$ cat apps/chart-umbrella/values.yaml`
 ```
-podinfo: # values for sub chart must be under it's name key
+podinfo:  # Values for the sub-chart must be under its dependency name key
   replicaCount: 2
 ```
 
-This set up will ... 
+This set up will use upstream chart also apply to it any specifyed values and on top of it add resources from umbrella chart`s template directory.
 
 ### Kustomize them all
 
-Kustomize alone deserves dedicated series, let's try to stick with unfork approach by now. Kustimize natively supported source for Application by ArgoCD. And the whole nature of it is to add, remove or update configuration options without forking.
+Kustomize alone deserves dedicated series, let's try to stick with unfork approach by now. And the whole nature of it is to add, remove or update configuration options without forking.
 
 #### Hydrate chart with Kustomize
 
@@ -158,8 +154,8 @@ In order to be able to use kustomize we will need to create `kustomization.yaml`
 ```
 apps
 ├── _installed
-│   └── cert-manager.yaml
-└── cert-manager
+│   └── kustomize.yaml
+└── kustomize
     ├── cloudflare-api-token.yaml
     ├── cloudflare-issuer.yaml
     └── kustomization.yaml
@@ -167,32 +163,24 @@ apps
 
 `$ cat apps/_installed/cert-manager.yaml`
 ```
----
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: cert-manager
+  name: kustomize
   namespace: argocd
 spec:
   project: default
   source:
-    path: apps/cert-manager
-    repoURL: https://github.com/alezkv/c.alezkv.net
+    path: apps/kustomize
+    repoURL: https://github.com/alezkv/unfork-with-argocd
     targetRevision: HEAD
   destination:
-    namespace: cert-manager
+    namespace: kustomize
     server: https://kubernetes.default.svc
-  syncPolicy:
-    syncOptions:
-      - CreateNamespace=true
-    automated:
-      prune: true
-      selfHeal: true
 ```
 
 `$ cat apps/cert-manager/kustomization.yaml`
 ```
----
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
@@ -200,7 +188,7 @@ helmCharts:
   - name: cert-manager
     repo: https://charts.jetstack.io
     releaseName: cert-manager
-    namespace: cert-manager
+    namespace: kustomize
     version: v1.13.3
     includeCRDs: true
     valuesInline:
