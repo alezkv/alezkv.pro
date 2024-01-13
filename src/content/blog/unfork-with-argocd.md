@@ -2,38 +2,38 @@
 title: 'Unfork with ArgoCD'
 description: 'How to add or change k8s resources using ArgoCD avoiding forking of third-party software.'
 pubDate: 'Jan 8 2024'
-heroImage: '../../assets/blog/container-is-a-process/container-is-a-process.png'
+heroImage: '../../assets/blog/unfork-with-argocd/unfork-with-argocd.png'
 ---
 
-With a help of existed freely avaliable software we can build personal or company software stack not from groudn up. But get standing on a holders of a giants. This eliminate constantly reinventing most of the parts of our systems. But somethimes existed of the shelf solutions doesn't provide enought customization to archive reqired goals. In this case we face a dillema: fork or not to fork. There is a reasons for either of them. But today we will explore "unfork" approach. We will explore avaliable options with examples and compare them afterwards.
+With the help of existing freely available software, we can build a personal or company software stack without starting from scratch, but rather by standing on the shoulders of giants. This eliminates the need to constantly reinvent most parts of our systems. However, sometimes existing off-the-shelf solutions don't provide enough customization to achieve the required goals. In such cases, we face a dilemma: to fork or not to fork. There are reasons for either choice, but today we will explore the "unfork" approach. We will investigate available options with examples and compare them afterward.
 
-### Assumption about environment and the goal
+### Assumptions regarding the environment and the goal
 
-- Kubernetes
-- ArgoCD
-- Any third-party off the shelf software
+- Kubernetes - extensible API server as universal control plane
+- ArgoCD - GitOPS controller with monitoring Git repos and apply objects to k8s
+- Any third-party off-the-shelf software
 
-Goal: we need to add a specific k8s resource to the ArgoCD application when source of the application managed by third-party. And do not manage a fork of that software.
+Goal: We need to add a specific Kubernetes (k8s) resource to the ArgoCD application when the source of the application is managed by a third party, without managing a fork of that software.
 
-In all described cases you can add or overwrite whole resource. More granular patching is not always avaliable, I'll note about this later.
+In all the described cases, you can either add or overwrite the entire resource. More granular patching is not always available; I'll note this later.
 
-### Flaivours of software distribution
+### Flavors of software distribution
 
-Here is the list of a way to distribute software that occur in the wild. With corresponding examples.
+Here is a list of ways to distribute software that occur in the wild, along with corresponding examples.
 
 - plain kubernetes manifests: [ArgoCD](https://argo-cd.readthedocs.io/en/stable/operator-manual/installation/#multi-tenant)
 - kustomize [Kube Prometheus](https://github.com/prometheus-operator/kube-prometheus/blob/main/kustomization.yaml)
 - helm chart [Traefik Ingress](https://github.com/traefik/traefik-helm-chart)
 
-[ArgoCD have their own set of supported sources for application](https://argo-cd.readthedocs.io/en/stable/user-guide/application_sources/) as such:
+[ArgoCD has its own set of supported sources for applications](https://argo-cd.readthedocs.io/en/stable/user-guide/application_sources/) as such:
 
 - Kustomize applications
 - Helm charts
 - A directory of manifests
 
-### How Renovate fits here
+### How does Renovate fit in here
 
-It's is a good practice to get updates for used software. In order to track changes of upstream we can utilize uptomatic dependancy tracking systems such as [Dependabot](https://github.com/dependabot) or [Rennovate](https://github.com/renovatebot/renovate). This is a broad topic and it require separate article to be covered. If you want to read about that, please vote in comments section down below.
+It is a good practice to keep software up to date. To track changes in upstream software, we can utilize automatic dependency tracking systems such as [Dependabot](https://github.com/dependabot) or [Renovate](https://github.com/renovatebot/renovate). This is a broad topic and requires a separate article to be covered. If you would like to read about it, please vote in the comments section below.
 
 ### Outline
 
@@ -43,17 +43,17 @@ It's is a good practice to get updates for used software. In order to track chan
 
 ### Multiple Sources for an Application
 
-Recent version (2.6) ArgoCD support `spec.sources` (plural) on Application instead of `spec.source`. This allow to specify multiple sources and if they produce the same resource (same group, kind, name, and namespace), the last source to produce the resource will take precedence.
+Recent version (2.6) of ArgoCD supports spec.sources (plural) on an Application instead of spec.source. This allows you to specify multiple sources, and if they produce the same resource (same group, kind, name, and namespace), the last source to produce the resource will take precedence.
 
 Pros:
-- Because of the fact that this feature is a part of ArgoCD Application definition. It's support all avaliable for ArgoCD application sources out of the box
+- Because this feature is part of the ArgoCD Application definition, it supports all available ArgoCD application sources out of the box
 
 Cons:
-- Only whole resource overwrite are possible
-- This is beta feature. The UI and CLI still generally behave as if only the first source is specified
-- [Rollback is not supported for apps with multiple sources](https://github.com/argoproj/argo-cd/blob/cd4fc97c9dee7b69721bbb577a4f50ba897399c5/ui/src/app/applications/components/application-details/application-details.tsx#L802)
+- Only complete resource overwrites are possible
+- This is a beta feature. The UI and CLI still generally behave as if only the first source is specified
+- [Rollback is not supported for applications with multiple sources](https://github.com/argoproj/argo-cd/blob/cd4fc97c9dee7b69721bbb577a4f50ba897399c5/ui/src/app/applications/components/application-details/application-details.tsx#L802)
 
-Here is example of using Helm Chart from upstream with our custom values.yaml from Git. Plus resources from plain manifests owerwrite on top.
+Here is an example of using a Helm Chart from upstream with our custom values.yaml from Git, along with resources from plain manifests overwriting on top.
 
 `$ cat apps/_installed/multiple-sources.yaml`
 ```
@@ -82,13 +82,13 @@ spec:
     namespace: multiple-sources
 ```
 
-You can combine any suported by ArgoCD sources. So for example you could get external software from kustomize, then apply local Helm Chart and finally trow on top couple plain manifests.
+You can combine any sources supported by ArgoCD. For example, you could obtain external software from Kustomize, then apply a local Helm Chart, and finally apply a couple of plain manifests on top.
 
 ### Umbrella chart
 
-This tecknik utilize dependency feature of Helm Cart. You can use multiple charts as a dependacyes as well as bake it's configuration within umrella chart.
+This technique utilizes the dependency feature of Helm Chart. You can use multiple charts as dependencies and also embed their configurations within an umbrella chart.
 
-You need to have `Application` and umbrella Chart.
+You need to have the Application and the umbrella chart.
 
 `$ tree apps`
 ```
@@ -138,17 +138,17 @@ podinfo:  # Values for the sub-chart must be under its dependency name key
   replicaCount: 2
 ```
 
-This set up will use upstream chart also apply to it any specifyed values and on top of it add resources from umbrella chart`s template directory.
+This setup will use the upstream chart, apply any specified values to it, and, on top of that, add resources from the umbrella chart's template directory.
 
 ### Kustomize them all
 
-Kustomize alone deserves dedicated series, let's try to stick with unfork approach by now. And the whole nature of it is to add, remove or update configuration options without forking.
+Kustomize alone deserves a dedicated series; let's try to stick with the unforked approach for now. The whole nature of it is to add, remove, or update configuration options without forking.
 
 #### Hydrate chart with Kustomize
 
-It's possibe to render Helm Chart by Kustomize. This approach allow additional and vary tunable way to handle Helm Charts. This feature doesn't enabled by default thougs required custom configuration. You can check more details on that matter [here](https://argo-cd.readthedocs.io/en/stable/user-guide/kustomize/#kustomizing-helm-charts) and [here](https://kubectl.docs.kubernetes.io/references/kustomize/builtins/#_helmchartinflationgenerator_)
+It's possible to render a Helm Chart with Kustomize. This approach allows for additional and highly tunable ways to handle Helm Charts. However, this feature isn't enabled by default and requires custom configuration. You can find more details on this matter [here](https://argo-cd.readthedocs.io/en/stable/user-guide/kustomize/#kustomizing-helm-charts) and [here](https://kubectl.docs.kubernetes.io/references/kustomize/builtins/#_helmchartinflationgenerator_)
 
-In order to be able to use kustomize we will need to create `kustomization.yaml` and point ArgoCD Application to it's directory.
+To use Kustomize, you'll need to create a kustomization.yaml file and point the ArgoCD Application to its directory.
 
 `$ tree apps`
 ```
@@ -161,7 +161,7 @@ apps
     └── kustomization.yaml
 ```
 
-`$ cat apps/_installed/cert-manager.yaml`
+`$ cat apps/_installed/kustomize.yaml`
 ```
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -179,7 +179,7 @@ spec:
     server: https://kubernetes.default.svc
 ```
 
-`$ cat apps/cert-manager/kustomization.yaml`
+`$ cat apps/kustomize/kustomization.yaml`
 ```
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -199,10 +199,14 @@ resources:
   - cloudflare-issuer.yaml
 ```
 
-In this setup you can add/replace resources to existed chart using `resources:`. This will work the same way as with multiple application sources by owerwriting "same" resources.
-But you can also utilyze whole transformation capabilityes of Kustomize, to more precise resource manipulation. This could be [replacement](https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/replacements/) or [patches](https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/patches/) or [others](https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/)
+In this setup, you can add or replace resources in an existing chart using resources:. This will work the same way as with multiple application sources, overwriting the 'same' resources. However, you can also utilize the full transformation capabilities of Kustomize for more precise resource manipulation. This could include [replacement](https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/replacements/), [patches](https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/patches/), or [others methods](https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/)
 
-Don't forget that as source for resources in kustomize could be remote Git repositoryes with theris own Kustomize or plain Kubernetes manifests.
+Don't forget that the source for resources in Kustomize could be remote Git repositories with their own Kustomize or plain Kubernetes manifests
 
+### What to pick
 
-NOTE: such vast combinatoric options - is a bless and a curs of k8s/ArgoCD. You need to have a clear vision or you can stuck with all that complexity and spend time and effort on many avaliable options with small return.
+Multiple sources in ArgoCD are great for merging separate configurations, best for complete resource overwrites. Umbrella charts, using Helm's dependencies, offer structured management of complex deployments, ideal for hierarchical configuration integration. Kustomize, with its detailed customization capabilities, excels in precise resource manipulation for nuanced adjustments.
+
+### Final Thoughts
+
+Kubernetes and ArgoCD offer tremendous flexibility and power for managing containerized applications, but this comes with the responsibility of having a well-defined strategy and vision. Without a clear direction, the complexity of these tools can become a hindrance rather than an advantage. Therefore, it's essential to strike a balance between leveraging the flexibility they provide and maintaining a clear and purposeful approach to application deployment and management
