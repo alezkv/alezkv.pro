@@ -1,6 +1,6 @@
 ---
 title: 'Unfork with ArgoCD'
-description: 'How to add or change k8s resources using ArgoCD avoiding forking of third-party software.'
+description: 'Post provides strategies for customizing third-party software in Kubernetes without maintaining a fork, focusing on ArgoCD integration and management techniques'
 pubDate: 'Jan 13 2024'
 heroImage: '../../assets/blog/unfork-with-argocd/unfork-with-argocd.png'
 ---
