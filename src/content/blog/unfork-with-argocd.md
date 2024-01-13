@@ -7,12 +7,12 @@ heroImage: '../../assets/blog/unfork-with-argocd/unfork-with-argocd.png'
 
 With the help of existing freely available software, we can build a personal or company software stack without starting from scratch, but rather by standing on the shoulders of giants. This eliminates the need to constantly reinvent most parts of our systems. However, sometimes existing off-the-shelf solutions don't provide enough customization to achieve the required goals. In such cases, we face a dilemma: to fork or not to fork. There are reasons for either choice, but today we will explore the "unfork" approach. We will investigate available options with examples and compare them afterward.
 
-All examples are avaliable in [companion repo](https://github.com/alezkv/unfork-with-argocd/).
+All examples are available in [companion repo](https://github.com/alezkv/unfork-with-argocd/).
 
 ### Assumptions regarding the environment and the goal
 
 - Kubernetes - extensible API server as universal control plane
-- ArgoCD - GitOPS controller with monitoring Git repos and apply objects to k8s
+- ArgoCD - GitOPS controller which monitoring Git repos and apply objects to k8s
 - Any third-party off-the-shelf software
 
 Goal: We need to add a specific Kubernetes (k8s) resource to the ArgoCD application when the source of the application is managed by a third party, without managing a fork of that software.
