@@ -98,7 +98,7 @@ Also, a Snapshot object in Kubernetes will be created as a mirror of the Restic 
 After the issue is fixed, this will be the proper way to check the Backup status.
 
 ```bash
-$ kubectl -n vaultwarden describe backups.k8up.io backup-dummy
+kubectl -n vaultwarden describe backups.k8up.io backup-dummy
 ```
 ```bash
 Name:         backup-dummy
