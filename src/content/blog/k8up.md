@@ -237,6 +237,12 @@ spec:
 
 ## Create a Schedule object
 
+The final step in our journey will be setting up scheduling, which will combine and automate the following actions:
+- backing up data frequently
+- checking the integrity of backup storage
+- maintaining an appropriate number of backup versions over time
+
+
 ```YAML
 apiVersion: k8up.io/v1
 kind: Schedule
