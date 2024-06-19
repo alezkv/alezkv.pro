@@ -1,5 +1,5 @@
 ---
-title: 'Kubernetes, PVC, Restic, and ketchup(k8up)'
+title: 'Backup Kubernetes PVC with Restic, and ketchup(k8up)'
 description: 'Discover how to implement a robust disaster recovery strategy using Kubernetes. This comprehensive guide covers the steps to set up reliable backup and restore processes with K8up and Restic, ensuring the security and availability of your data. Enhance your data protection and resilience with this step-by-step tutorial.'
 pubDate: 'Jun 19 2024'
 heroImage: '../../assets/blog/k8up/k8up.webp'
