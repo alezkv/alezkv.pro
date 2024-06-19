@@ -19,7 +19,7 @@ K8up is a Kubernetes Backup Operator. It's a CNCF Sandbox Open Source project th
 
 K8up scans namespaces for matching Persistent Volume Claims (PVCs), creates backup jobs, and mounts the PVCs for Restic to back up to the configured endpoint.
 
-To create a backup with K8up, you define a Backup object in YAML, specifying details such as the backend storage and credentials. This configuration is then applied to your Kubernetes cluster using kubectl apply. For regular backups, you create a Schedule object, which outlines the frequency and other parameters for backup, prune, and check jobs.
+To create a backup with [k8up](k8up.io), you define a Backup object in YAML, specifying details such as the backend storage and credentials. This configuration is then applied to your Kubernetes cluster using kubectl apply. For regular backups, you create a Schedule object, which outlines the frequency and other parameters for backup, prune, and check jobs.
 
 Installation instruction can be found on the [official site](https://docs.k8up.io/k8up/how-tos/installation.html)
 
