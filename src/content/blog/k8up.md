@@ -49,7 +49,6 @@ type: Opaque
 stringData:
 # password: change_to_strong_password_or_passhprase
 ```
-passphrase
 
 ```YAML
 apiVersion: v1
